@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon src/index.js --exec \"npx eslint --ext .js,.mjs src/\""
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,10 @@
     "mongoose": "^5.10.3",
     "nodemon": "^2.0.15",
     "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.7.0",
+    "eslint-config-react-app": "^7.0.0",
+    "eslint-plugin-import": "^2.25.4"
   }
 }
