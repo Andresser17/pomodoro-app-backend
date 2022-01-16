@@ -1,10 +1,8 @@
-const config = require('./common/config/env.config.js');
-
-const express = require('express');
+import config from './src/common/config/env.config.js';
+import express from 'express';
+import AuthorizationRouter from './src/authorization/routes.config.js';
+import UsersRouter from './src/users/routes.config.js';
 const app = express();
-
-const AuthorizationRouter = require('./authorization/routes.config');
-const UsersRouter = require('./users/routes.config');
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -20,8 +18,8 @@ app.use(function (req, res, next) {
 });
 
 app.use(express.json());
-AuthorizationRouter.routesConfig(app);
-UsersRouter.routesConfig(app);
+AuthorizationRouter(app);
+UsersRouter(app);
 
 
 app.listen(config.port, function () {
