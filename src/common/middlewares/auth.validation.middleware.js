@@ -15,7 +15,7 @@ export const validRefreshNeeded = (req, res, next) => {
   let refresh_token = b.toString();
   let hash = crypto
     .createHmac("sha512", req.jwt.refreshKey)
-    .update(req.jwt.userId + config.secret)
+    .update(req.jwt.userId + config.jwtSecret)
     .digest("base64");
   if (hash === refresh_token) {
     req.body = req.jwt;
@@ -26,19 +26,15 @@ export const validRefreshNeeded = (req, res, next) => {
 };
 
 export const validJWTNeeded = (req, res, next) => {
-  if (req.headers["authorization"]) {
-    try {
-      let authorization = req.headers["authorization"].split(" ");
-      if (authorization[0] !== "Bearer") {
-        return res.status(401).send();
-      } else {
-        req.jwt = jwt.verify(authorization[1], config.secret);
-        return next();
-      }
-    } catch (err) {
-      return res.status(403).send();
-    }
-  } else {
-    return res.status(401).send();
+  if (!req.headers["authorization"]) return res.status(401).send();
+
+  try {
+    let authorization = req.headers["authorization"].split(" ");
+    if (authorization[0] !== "Bearer") return res.status(401).send();
+
+    req.jwt = jwt.verify(authorization[1], config.jwtSecret);
+    return next();
+  } catch (err) {
+    return res.status(403).send();
   }
 };

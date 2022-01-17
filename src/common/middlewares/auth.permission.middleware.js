@@ -1,28 +1,26 @@
-import jwt from "jsonwebtoken";
-import jwtSecret from "../config/env.config.js";
-// const ADMIN_PERMISSION = require("../config/env.config")["permissionLevels"][
-//     "ADMIN"
-// ];
+import config from "../config/env.config.js";
 
 export const minimumPermissionLevelRequired = (required_permission_level) => {
-  return (req, res, next) => {
+  const middleware = (req, res, next) => {
     let user_permission_level = parseInt(req.jwt.permissionLevel);
-    let userId = req.jwt.userId;
-    if (user_permission_level & required_permission_level) {
-      return next();
-    } else {
+
+    if (!user_permission_level && !required_permission_level)
       return res.status(403).send();
-    }
+
+    return next();
   };
+
+  return middleware;
 };
 
 export const onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
   let user_permission_level = parseInt(req.jwt.permissionLevel);
   let userId = req.jwt.userId;
+
   if (req.params && req.params.userId && userId === req.params.userId) {
     return next();
   } else {
-    if (user_permission_level & jwtSecret.permissionLevel.ADMIN) {
+    if (user_permission_level && config.permissionLevel.ADMIN) {
       return next();
     } else {
       return res.status(403).send();

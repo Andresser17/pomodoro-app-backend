@@ -19,8 +19,8 @@ const FREE = config.permissionLevels.NORMAL_USER;
 function UsersRouter(app) {
   app.post("/users", [insert]);
   app.get("/users", [
-    // validJWTNeeded,
-    // minimumPermissionLevelRequired(PAID),
+    validJWTNeeded,
+    minimumPermissionLevelRequired(PAID),
     list,
   ]);
   app.get("/users/:userId", [
@@ -36,8 +36,8 @@ function UsersRouter(app) {
     patchById,
   ]);
   app.delete("/users/:userId", [
-    // validJWTNeeded,
-    // minimumPermissionLevelRequired(ADMIN),
+    validJWTNeeded,
+    minimumPermissionLevelRequired(ADMIN),
     removeById,
   ]);
 }

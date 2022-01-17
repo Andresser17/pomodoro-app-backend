@@ -14,10 +14,11 @@ export const login = (req, res) => {
     req.body.refreshKey = salt;
     let token = jwt.sign(req.body, config.jwtSecret);
     let b = Buffer.from(hash);
-    let refresh_token = b.toString("base64");
+    let refreshToken = b.toString("base64");
+
     res.status(201).send({
       accessToken: token,
-      refreshToken: refresh_token,
+      refreshToken: refreshToken,
     });
   } catch (err) {
     res.status(500).send({ errors: err });

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/index.js --exec \"npx eslint --ext .js,.mjs src/\""
+    "start": "nodemon src/index.js --exec \"npx eslint --ext .js,.mjs src/ && node src/index.js\""
   },
   "repository": {
     "type": "git",

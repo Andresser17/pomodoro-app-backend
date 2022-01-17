@@ -1,7 +1,7 @@
 import express from "express";
-import config from "./common/config/env.config";
-import AuthorizationRouter from "./authorization/routes.config";
-import UsersRouter from "./users/routes.config";
+import config from "./common/config/env.config.js";
+import AuthorizationRouter from "./authorization/routes.config.js";
+import UsersRouter from "./users/routes.config.js";
 
 const app = express();
 
