@@ -1,10 +1,10 @@
 import config from "../config/env.config.js";
 
-export const minimumPermissionLevelRequired = (required_permission_level) => {
+export const minimumPermissionLevelRequired = (requiredPermissionLevel) => {
   const middleware = (req, res, next) => {
-    let user_permission_level = parseInt(req.jwt.permissionLevel);
+    let userPermissionLevel = parseInt(req.jwt.permissionLevel);
 
-    if (!user_permission_level && !required_permission_level)
+    if (userPermissionLevel !== requiredPermissionLevel)
       return res.status(403).send();
 
     return next();
@@ -14,18 +14,18 @@ export const minimumPermissionLevelRequired = (required_permission_level) => {
 };
 
 export const onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
-  let user_permission_level = parseInt(req.jwt.permissionLevel);
+  let userPermissionLevel = parseInt(req.jwt.permissionLevel);
   let userId = req.jwt.userId;
 
-  if (req.params && req.params.userId && userId === req.params.userId) {
+  // User is the same or is an admin
+  if (
+    userId === req.params.userId ||
+    userPermissionLevel === config.permissionLevels.ADMIN
+  ) {
     return next();
-  } else {
-    if (user_permission_level && config.permissionLevel.ADMIN) {
-      return next();
-    } else {
-      return res.status(403).send();
-    }
   }
+
+  return res.status(403).send();
 };
 
 export const sameUserCantDoThisAction = (req, res, next) => {
