@@ -4,13 +4,13 @@ import {
   getById,
   patchById,
   removeById,
-} from "./controllers/users.controller.js";
+} from "../controllers/user.controller.js";
 import {
   minimumPermissionLevelRequired,
   onlySameUserOrAdminCanDoThisAction,
-} from "../common/middlewares/auth.permission.middleware.js";
-import { validJWTNeeded } from "../common/middlewares/auth.validation.middleware.js";
-import config from "../common/config/env.config.js";
+} from "../middleware/authPermission.js";
+import { validJWTNeeded } from "../middleware/authValidation.js";
+import config from "../config/env.config.js";
 
 const ADMIN = config.permissionLevels.ADMIN;
 const PAID = config.permissionLevels.PAID_USER;

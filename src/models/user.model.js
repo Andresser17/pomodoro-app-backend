@@ -1,4 +1,4 @@
-import mongoose from "../../common/services/mongoose.service.js";
+import mongoose from "../services/mongoose.service.js";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({

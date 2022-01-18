@@ -1,13 +1,13 @@
 import {
   hasAuthValidFields,
   isPasswordAndUserMatch,
-} from "./middlewares/verify.user.middleware.js";
-import { login } from "./controllers/authorization.controller.js";
+} from "../middleware/verifyUser.js";
+import { login } from "../controllers/auth.controller.js";
 import {
   validJWTNeeded,
   verifyRefreshBodyField,
   validRefreshNeeded,
-} from "../common/middlewares/auth.validation.middleware.js";
+} from "../middleware/authValidation.js";
 
 function AuthorizationRouter(app) {
   app.post("/auth", [hasAuthValidFields, isPasswordAndUserMatch, login]);

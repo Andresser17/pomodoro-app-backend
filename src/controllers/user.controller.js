@@ -4,7 +4,7 @@ import {
   findById,
   updateUser,
   deleteById,
-} from "../models/users.model.js";
+} from "../models/user.model.js";
 import crypto from "crypto";
 
 export const insert = (req, res) => {
