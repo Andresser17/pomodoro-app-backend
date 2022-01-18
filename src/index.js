@@ -4,6 +4,9 @@ import config from "./config/env.config.js";
 // Routes
 import AuthorizationRouter from "./routes/auth.routes.js";
 import UsersRouter from "./routes/user.routes.js";
+// DB
+import db from "./models/index.js";
+const Role = db.role;
 
 const app = express();
 
@@ -32,6 +35,64 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // Parse request of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+// Db connection
+const options = {
+  autoIndex: false, // Don't build indexes
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0,
+  // all other approaches are now deprecated by MongoDB:
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+const initial = () => {
+  Role.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new Role({
+        name: "user",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'user' to roles collection");
+      });
+
+      new Role({
+        name: "moderator",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'moderator' to roles collection");
+      });
+
+      new Role({
+        name: "admin",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'admin' to roles collection");
+      });
+    }
+  });
+};
+
+db.mongoose
+  .connect(process.env.MONGO_URI, options)
+  .then(() => {
+    console.log("Succesfully connect to MongoDB");
+    initial();
+  })
+  .catch((err) => {
+    console.error("Connection error", err);
+    process.exit();
+  });
 
 // Routes
 AuthorizationRouter(app);

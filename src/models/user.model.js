@@ -1,12 +1,18 @@
-import mongoose from "../services/mongoose.service.js";
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   email: String,
   password: String,
+  // remove in future version
   permissionLevel: Number,
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role"
+    }
+  ]
 });
 
 userSchema.virtual("id").get(function () {
@@ -89,3 +95,4 @@ export const deleteById = (userId) => {
 //         });
 //     });
 // };
+export default User;
