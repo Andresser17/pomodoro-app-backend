@@ -1,7 +1,6 @@
-import config from "../../common/config/env.config.js";
+import config from "../config/env.config.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-// const uuid = require("uuid");
 
 export const login = (req, res) => {
   try {

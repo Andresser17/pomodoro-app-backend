@@ -1,4 +1,4 @@
-import { findByEmail } from "../../users/models/users.model.js";
+import { findByEmail } from "../models/user.model.js";
 import crypto from "crypto";
 
 export const hasAuthValidFields = (req, res, next) => {
