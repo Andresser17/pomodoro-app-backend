@@ -1,12 +1,16 @@
 import express from "express";
 import cors from "cors";
 import config from "./config/env.config.js";
+import dotenv from "dotenv";
 // Routes
 import AuthorizationRouter from "./routes/auth.routes.js";
 import UsersRouter from "./routes/user.routes.js";
+// Models
+import { createRole } from "./models/role.model.js";
 // DB
 import db from "./models/index.js";
 const Role = db.role;
+dotenv.config();
 
 const app = express();
 
@@ -50,54 +54,28 @@ const options = {
 const initial = () => {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
-      new Role({
-        name: "user",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'user' to roles collection");
-      });
-
-      new Role({
-        name: "moderator",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'moderator' to roles collection");
-      });
-
-      new Role({
-        name: "admin",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'admin' to roles collection");
-      });
+      createRole("user");
+      createRole("moderator");
+      createRole("admin");
     }
   });
 };
-
-db.mongoose
-  .connect(process.env.MONGO_URI, options)
-  .then(() => {
-    console.log("Succesfully connect to MongoDB");
-    initial();
-  })
-  .catch((err) => {
-    console.error("Connection error", err);
-    process.exit();
-  });
 
 // Routes
 AuthorizationRouter(app);
 UsersRouter(app);
 
-app.listen(config.port || 8080, () => {
-  console.log(`app listening at port ${config.port}.`);
-});
+const startServer = async () => {
+  console.log("Connecting to MongoDB");
+  const connect = await db.mongoose.connect(process.env.MONGO_URI, options);
+
+  if (!connect) return console.error("Connection error", connect);
+  console.log("Succesfully connect to MongoDB");
+  initial();
+
+  app.listen(config.port || 8080, () => {
+    console.log(`app listening at port ${config.port}.`);
+  });
+};
+
+startServer();

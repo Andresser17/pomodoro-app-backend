@@ -15,9 +15,12 @@ export const insert = (req, res) => {
     .digest("base64");
   req.body.password = salt + "$" + hash;
   req.body.permissionLevel = 1;
-  createUser(req.body).then((result) => {
-    res.status(201).send({ id: result._id });
-  });
+
+  // createUser(req.body).then((result) => {
+  //   res.status(201).send({ id: result._id });
+  // });
+  //
+  return res.status(201);
 };
 
 export const list = (req, res) => {
