@@ -5,7 +5,7 @@ const ROLES = db.ROLES;
 export const checkDuplicateEmail = async (req, res, next) => {
   const email = await getUserByEmail(req.body.email);
 
-  if (!email)
+  if (email)
     return res
       .status(400)
       .send({ message: "Email provided is already registered" });

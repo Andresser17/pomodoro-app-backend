@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema({
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Role"
-    }
-  ]
+      ref: "Role",
+    },
+  ],
 });
 
 userSchema.virtual("id").get(function () {
@@ -31,11 +31,14 @@ userSchema.findById = function (cb) {
 const User = mongoose.model("Users", userSchema);
 
 // methods
-export const getUserByEmail = async (email) => {
-    const search = await User.find({ email: email });
-    
-    return search;
+export const getUserByEmail = (email, populate) => {
+  const search = User.findOne({ email: email });
+
+  if(populate) return search.populate(...populate);
+
+  return search;
 };
+
 export const getUserById = (id) => {
   return User.findById(id).then((result) => {
     result = result.toJSON();
@@ -98,4 +101,5 @@ export const deleteById = (userId) => {
 //         });
 //     });
 // };
+
 export default User;

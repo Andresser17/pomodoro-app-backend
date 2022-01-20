@@ -25,4 +25,16 @@ export const getRoles = async (userRoles) => {
   return roles;
 };
 
+export const getRolesByName = async (userRoles) => {
+  const roles = await Role.find({ name: { $in: userRoles } });
+
+  return roles;
+};
+
+export const getOneRole = (filter) => {
+  const role = Role.find(filter);
+
+  return role;
+};
+
 export default Role;

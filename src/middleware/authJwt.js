@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import config from "../config/auth.config.js";
+import authConfig from "../config/auth.config.js";
 // DB
 import { getUserById } from "../models/user.model.js";
 import { getRoles } from "../models/role.model.js";
@@ -14,7 +14,7 @@ export const verifyToken = (req, res, next) => {
     return res.status(403).send({ message: "No token provided!" });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, authConfig.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }
@@ -25,7 +25,7 @@ export const verifyToken = (req, res, next) => {
 
 export const minimumRole = (minRole) => {
   const middleware = async (req, res, next) => {
-    const user = await getUserById(req.params.userId);
+    const user = await getUserById(req.userId);
     const roles = await getRoles(user.roles);
 
     for (let role of roles) {
