@@ -1,7 +1,7 @@
 import {
   createUser,
   listUsers,
-  findById,
+  getUserById,
   updateUser,
   deleteById,
 } from "../models/user.model.js";
@@ -42,7 +42,7 @@ export const list = (req, res) => {
 };
 
 export const getById = (req, res) => {
-  findById(req.params.userId).then((result) => {
+  getUserById(req.params.userId).then((result) => {
     res.status(200).send(result);
   });
 };

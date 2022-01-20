@@ -1,4 +1,4 @@
-import { findByEmail } from "../models/user.model.js";
+import { getUserByEmail } from "../models/user.model.js";
 import crypto from "crypto";
 
 export const hasAuthValidFields = (req, res, next) => {
@@ -25,7 +25,7 @@ export const hasAuthValidFields = (req, res, next) => {
 };
 
 export const isPasswordAndUserMatch = (req, res, next) => {
-  findByEmail(req.body.email).then((user) => {
+  getUserByEmail(req.body.email).then((user) => {
     if (!user[0]) {
       res.status(404).send({});
     } else {

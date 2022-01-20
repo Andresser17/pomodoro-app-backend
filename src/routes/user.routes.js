@@ -11,7 +11,8 @@ import {
   minimumPermissionLevelRequired,
   onlySameUserOrAdminCanDoThisAction,
 } from "../middleware/authPermission.js";
-import {checkDuplicateEmail} from "../middleware/verifySignUp.js"
+import { checkDuplicateEmail } from "../middleware/verifySignUp.js";
+import { minimumRole } from "../middleware/authJwt.js";
 import { validJWTNeeded } from "../middleware/authValidation.js";
 import config from "../config/env.config.js";
 
@@ -27,9 +28,10 @@ function UsersRouter(app) {
     list,
   ]);
   app.get("/users/:userId", [
-    validJWTNeeded,
-    minimumPermissionLevelRequired(FREE),
-    onlySameUserOrAdminCanDoThisAction,
+    minimumRole("admin"), 
+    // validJWTNeeded,
+    // minimumPermissionLevelRequired(FREE),
+    // onlySameUserOrAdminCanDoThisAction,
     getById,
   ]);
   app.patch("/users/:userId", [

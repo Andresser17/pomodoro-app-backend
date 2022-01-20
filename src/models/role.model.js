@@ -19,4 +19,10 @@ export const createRole = async (role) => {
   return console.log(`added ${role} to roles collection`);
 };
 
+export const getRoles = async (userRoles) => {
+  const roles = await Role.find({ _id: { $in: userRoles } });
+
+  return roles;
+};
+
 export default Role;
