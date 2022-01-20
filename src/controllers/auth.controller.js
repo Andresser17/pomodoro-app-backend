@@ -3,8 +3,12 @@ import authConfig from "../config/auth.config.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 // Models
+import db from "../models/index.js";
 import { createUser, getUserByEmail } from "../models/user.model.js";
 import { getRolesByName, getOneRole } from "../models/role.model.js";
+import { getRefreshToken } from "../models/refreshToken.model.js";
+
+const { refreshToken: RefreshToken } = db;
 
 export const signUp = async (req, res) => {
   const user = await createUser({
@@ -43,7 +47,9 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-  const user = await getUserByEmail(req.body.email, ["roles", "-__v"]).catch((err) => res.status(500).send({ message: err }));
+  const user = await getUserByEmail(req.body.email, ["roles", "-__v"]).catch(
+    (err) => res.status(500).send({ message: err })
+  );
 
   if (!user) {
     return res.status(404).send({ message: "User Not found." });
@@ -59,45 +65,64 @@ export const signIn = async (req, res) => {
   }
 
   const token = jwt.sign({ id: user.id }, authConfig.secret, {
-    expiresIn: 86400, // 24 hours
+    expiresIn: authConfig.jwtExpiration,
   });
+
+  const refreshToken = await RefreshToken.createToken(user);
 
   const authorities = [];
 
   for (let role of user.roles) {
     authorities.push("ROLE_" + role.name.toUpperCase());
   }
-  
+
   res.status(200).send({
     id: user._id,
     username: user.username,
     email: user.email,
     roles: authorities,
     accessToken: token,
+    refreshToken,
   });
-
-  // User.findOne({
-  //   username: req.body.username,
-  // })
-  //   .populate("roles", "-__v")
-  //   .exec((err, user) => {
-  //     if (err) {
-  //       res.status(500).send({ message: err });
-  //       return;
-  //     }
-
-  //     if (!user) {
-  //       return res.status(404).send({ message: "User Not found." });
-  //     }
-  //   });
 };
 
-export const refresh_token = (req, res) => {
-  try {
-    req.body = req.jwt;
-    let token = jwt.sign(req.body, config.jwtSecret);
-    res.status(201).send({ id: token });
-  } catch (err) {
-    res.status(500).send({ errors: err });
+export const refreshToken = async (req, res) => {
+  const { refreshToken: requestToken } = req.body;
+
+  if (requestToken == null) {
+    return res.status(403).json({ message: "Refresh Token is required!" });
   }
+
+  const refreshToken = await getRefreshToken(requestToken).catch((err) =>
+    res.status(500).json({ message: err })
+  );
+
+  if (!refreshToken) {
+    res.status(403).json({ message: "Refresh token is not in database!" });
+    return;
+  }
+
+  if (RefreshToken.verifyExpiration(refreshToken)) {
+    RefreshToken.findByIdAndRemove(refreshToken._id, {
+      useFindAndModify: false,
+    }).exec();
+
+    res.status(403).json({
+      message: "Refresh token was expired. Please make a new signin request",
+    });
+    return;
+  }
+
+  const newAccessToken = jwt.sign(
+    { id: refreshToken.user._id },
+    authConfig.secret,
+    {
+      expiresIn: authConfig.jwtExpiration,
+    }
+  );
+
+  return res.status(200).json({
+    accessToken: newAccessToken,
+    refreshToken: refreshToken.token,
+  });
 };
