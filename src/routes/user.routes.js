@@ -1,6 +1,5 @@
 // Controller
 import {
-  insert,
   list,
   getById,
   patchById,
@@ -11,18 +10,8 @@ import {
   moderatorBoard,
 } from "../controllers/user.controller.js";
 // Middleware
-import {
-  minimumPermissionLevelRequired,
-  onlySameUserOrAdminCanDoThisAction,
-} from "../middleware/authPermission.js";
 import { checkDuplicateEmail } from "../middleware/verifySignUp.js";
 import { verifyToken, minimumRole } from "../middleware/authJwt.js";
-import { validJWTNeeded } from "../middleware/authValidation.js";
-import config from "../config/env.config.js";
-
-const ADMIN = config.permissionLevels.ADMIN;
-const PAID = config.permissionLevels.PAID_USER;
-const FREE = config.permissionLevels.NORMAL_USER;
 
 function UsersRouter(app) {
   app.use(function (req, res, next) {
@@ -33,6 +22,7 @@ function UsersRouter(app) {
     next();
   });
 
+  // Testing all the permision roles
   app.get("/api/test/all", allAccess);
 
   app.get("/api/test/user", [verifyToken], userBoard);

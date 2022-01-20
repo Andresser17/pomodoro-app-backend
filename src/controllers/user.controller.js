@@ -5,23 +5,6 @@ import {
   updateUser,
   deleteById,
 } from "../models/user.model.js";
-import crypto from "crypto";
-
-export const insert = (req, res) => {
-  let salt = crypto.randomBytes(16).toString("base64");
-  let hash = crypto
-    .createHmac("sha512", salt)
-    .update(req.body.password)
-    .digest("base64");
-  req.body.password = salt + "$" + hash;
-  req.body.permissionLevel = 1;
-
-  // createUser(req.body).then((result) => {
-  //   res.status(201).send({ id: result._id });
-  // });
-  //
-  return res.status(201);
-};
 
 export const list = (req, res) => {
   // let limit =
@@ -46,6 +29,7 @@ export const getById = (req, res) => {
     res.status(200).send(result);
   });
 };
+
 export const patchById = (req, res) => {
   if (req.body.password) {
     let salt = crypto.randomBytes(16).toString("base64");

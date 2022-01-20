@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 // Models
 import { createUser, getUserByEmail } from "../models/user.model.js";
 import { getRolesByName, getOneRole } from "../models/role.model.js";
-// import crypto from "crypto";
 
 export const signUp = async (req, res) => {
   const user = await createUser({
@@ -91,28 +90,6 @@ export const signIn = async (req, res) => {
   //       return res.status(404).send({ message: "User Not found." });
   //     }
   //   });
-};
-
-export const login = (req, res) => {
-  try {
-    let refreshId = req.body.userId + config.jwtSecret;
-    let salt = crypto.randomBytes(16).toString("base64");
-    let hash = crypto
-      .createHmac("sha512", salt)
-      .update(refreshId)
-      .digest("base64");
-    req.body.refreshKey = salt;
-    let token = jwt.sign(req.body, config.jwtSecret);
-    let b = Buffer.from(hash);
-    let refreshToken = b.toString("base64");
-
-    res.status(201).send({
-      accessToken: token,
-      refreshToken: refreshToken,
-    });
-  } catch (err) {
-    res.status(500).send({ errors: err });
-  }
 };
 
 export const refresh_token = (req, res) => {

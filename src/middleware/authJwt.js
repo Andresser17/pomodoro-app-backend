@@ -3,9 +3,6 @@ import authConfig from "../config/auth.config.js";
 // DB
 import { getUserById } from "../models/user.model.js";
 import { getRoles } from "../models/role.model.js";
-import db from "../models/index.js";
-const User = db.user;
-const Role = db.role;
 
 export const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
