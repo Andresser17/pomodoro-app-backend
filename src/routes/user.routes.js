@@ -10,7 +10,6 @@ import {
   moderatorBoard,
 } from "../controllers/user.controller.js";
 // Middleware
-import { checkDuplicateEmail } from "../middleware/verifySignUp.js";
 import { verifyToken, minimumRole } from "../middleware/authJwt.js";
 
 function UsersRouter(app) {
@@ -34,30 +33,14 @@ function UsersRouter(app) {
   );
 
   app.get("/api/test/admin", [verifyToken, minimumRole("admin")], adminBoard);
-  // app.post("/users", [checkDuplicateEmail, insert]);
-  // app.get("/users", [
-  //   validJWTNeeded,
-  //   minimumPermissionLevelRequired(PAID),
-  //   list,
-  // ]);
-  // app.get("/users/:userId", [
-  //   minimumRole("admin"),
-  //   // validJWTNeeded,
-  //   // minimumPermissionLevelRequired(FREE),
-  //   // onlySameUserOrAdminCanDoThisAction,
-  //   getById,
-  // ]);
-  // app.patch("/users/:userId", [
-  //   validJWTNeeded,
-  //   minimumPermissionLevelRequired(FREE),
-  //   onlySameUserOrAdminCanDoThisAction,
-  //   patchById,
-  // ]);
-  // app.delete("/users/:userId", [
-  //   validJWTNeeded,
-  //   minimumPermissionLevelRequired(ADMIN),
-  //   removeById,
-  // ]);
+  app.get("/api/users", [verifyToken, minimumRole("user")], list);
+  app.get("/api/users/:userId", [verifyToken, minimumRole("user")], getById);
+  app.patch("/api/users/:userId", [verifyToken, minimumRole("user")], patchById);
+  app.delete(
+    "/api/users/:userId",
+    [verifyToken, minimumRole("admin")],
+    removeById
+  );
 }
 
 export default UsersRouter;

@@ -1,4 +1,3 @@
-import config from "../config/env.config.js";
 import authConfig from "../config/auth.config.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -37,7 +36,7 @@ export const signUp = async (req, res) => {
 
   // Add role to created user
   user.roles = [role._id];
-  const saved = user.save().catch((err) => {
+  user.save().catch((err) => {
     if (err) {
       return res.status(500).send({ message: err });
     }
