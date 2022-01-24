@@ -1,22 +1,40 @@
 import mongoose from "mongoose";
 
+const taskSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  completed: Boolean,
+  pomodoros: Number,
+  from: Date,
+  to: Date,
+});
+
+const settingsSchema = new mongoose.Schema({
+  pomodoro: Number,
+  shortBreak: Number,
+  shortBreakActive: Boolean,
+  LongBreak: Number,
+  longBreakActive: Boolean,
+  autoStartBreak: Boolean,
+  autoStartPomodoro: Boolean,
+  LongBreakInterval: Number,
+  darkMode: Boolean,
+  alarmSound: String,
+});
+
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   email: String,
   password: String,
+  settings: settingsSchema,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",
     },
   ],
-  tasks: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Task",
-    },
-  ],
+  tasks: [taskSchema],
 });
 
 userSchema.virtual("id").get(function () {
@@ -31,6 +49,19 @@ userSchema.set("toJSON", {
 // userSchema.findById = function (cb) {
 //   return this.model("Users").find({ id: this.id }, cb);
 // };
+
+userSchema.statics.createTask = async function (userId, data) {
+  // Get user
+  const user = await this.findOne({ _id: userId });
+
+  if (!user) return user;
+
+  // Push new task in array of tasks
+  user.tasks.push(data);
+
+  // Save user
+  return user.save();
+};
 
 const User = mongoose.model("Users", userSchema);
 

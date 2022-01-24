@@ -42,7 +42,7 @@ function UsersRouter(app) {
     [verifyToken, minimumRole("admin")],
     removeById
   );
-  app.post("/api/tasks", [verifyToken, minimumRole("user")], createTask);
+  app.post("/api/tasks/:userId", [verifyToken, minimumRole("user")], createTask);
 }
 
 export default UsersRouter;

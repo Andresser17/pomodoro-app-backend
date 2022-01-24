@@ -6,7 +6,7 @@ import {
   deleteById,
 } from "../models/user.model.js";
 import db from "../models/index.js";
-const { User } = db;
+const { user: User } = db;
 
 export const list = (req, res) => {
   // let limit =
@@ -27,7 +27,6 @@ export const list = (req, res) => {
 };
 
 export const getById = (req, res) => {
-  console.log(req.params.userId);
   getUserById(req.params.userId).then((result) => {
     res.status(200).send(result);
   });
@@ -54,9 +53,49 @@ export const removeById = (req, res) => {
   });
 };
 
-export const createTask = (req, res) => {
-  console.log(req.body)
-  User.createTask(req.body) 
+export const createTask = async (req, res) => {
+  const date = new Date();
+
+  let from = req.body.from;
+  // If from property wasn't provided get actual date
+  if (!req.body.from) {
+    let month = String(date.getMonth() + 1);
+    month = month.length === 1 ? `0${month}` : month;
+    let day = String(date.getDate());
+    day = day.length === 1 ? `0${day}` : day;
+    const year = String(date.getFullYear());
+    from = `${month}-${day}-${year}`;
+  }
+
+  let to = "";
+  // if to property wasn't provided get actual date
+  if (!req.body.to) {
+    let month = String(date.getMonth() + 1);
+    month = month.length === 1 ? `0${month}` : month;
+    let day = String(date.getDate());
+    day = day.length === 1 ? `0${day}` : day;
+    const year = String(date.getFullYear());
+    // If from property wasn't provided
+    to = `${month}-${day}-${year}`;
+  }
+
+  const newTask = {
+    title: req.body.title,
+    description: req.body.description,
+    completed: req.body.completed,
+    pomodoros: req.body.pomodoros,
+    from,
+    to,
+  };
+
+  const created = await User.createTask(req.params.userId, newTask).catch(
+    (err) => res.status(500).json({ err: err })
+  );
+
+  if (!created) return res.status(400).json({ message: "Task not created" });
+
+  // Return user tasks array
+  return res.status(200).json(created.tasks);
 };
 
 // Test authorizations
