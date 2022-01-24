@@ -5,6 +5,8 @@ import {
   updateUser,
   deleteById,
 } from "../models/user.model.js";
+import db from "../models/index.js";
+const { User } = db;
 
 export const list = (req, res) => {
   // let limit =
@@ -25,6 +27,7 @@ export const list = (req, res) => {
 };
 
 export const getById = (req, res) => {
+  console.log(req.params.userId);
   getUserById(req.params.userId).then((result) => {
     res.status(200).send(result);
   });
@@ -49,6 +52,11 @@ export const removeById = (req, res) => {
   deleteById(req.params.userId).then((result) => {
     res.status(204).send({});
   });
+};
+
+export const createTask = (req, res) => {
+  console.log(req.body)
+  User.createTask(req.body) 
 };
 
 // Test authorizations

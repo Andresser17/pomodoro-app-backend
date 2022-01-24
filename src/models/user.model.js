@@ -5,12 +5,16 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   email: String,
   password: String,
-  // remove in future version
-  permissionLevel: Number,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",
+    },
+  ],
+  tasks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Task",
     },
   ],
 });
@@ -24,9 +28,9 @@ userSchema.set("toJSON", {
   virtuals: true,
 });
 
-userSchema.findById = function (cb) {
-  return this.model("Users").find({ id: this.id }, cb);
-};
+// userSchema.findById = function (cb) {
+//   return this.model("Users").find({ id: this.id }, cb);
+// };
 
 const User = mongoose.model("Users", userSchema);
 
@@ -34,18 +38,20 @@ const User = mongoose.model("Users", userSchema);
 export const getUserByEmail = (email, populate) => {
   const search = User.findOne({ email: email });
 
-  if(populate) return search.populate(...populate);
+  if (populate) return search.populate(...populate);
 
   return search;
 };
 
-export const getUserById = (id) => {
-  return User.findById(id).then((result) => {
-    result = result.toJSON();
-    delete result._id;
-    delete result.__v;
-    return result;
-  });
+export const getUserById = async (id) => {
+  const user = await User.findById(id).catch((err) => err);
+
+  // result = result.toJSON();
+  // delete result._id;
+  // delete result.__v;
+  // return result;
+
+  return user;
 };
 
 export const createUser = (userData) => {

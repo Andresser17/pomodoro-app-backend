@@ -8,6 +8,7 @@ import {
   adminBoard,
   userBoard,
   moderatorBoard,
+  createTask,
 } from "../controllers/user.controller.js";
 // Middleware
 import { verifyToken, minimumRole } from "../middleware/authJwt.js";
@@ -41,6 +42,7 @@ function UsersRouter(app) {
     [verifyToken, minimumRole("admin")],
     removeById
   );
+  app.post("/api/tasks", [verifyToken, minimumRole("user")], createTask);
 }
 
 export default UsersRouter;
