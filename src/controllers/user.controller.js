@@ -98,6 +98,12 @@ export const createTask = async (req, res) => {
   return res.status(200).json(created.tasks);
 };
 
+export const getUserSettings = (req, res) => {
+  console.log(req.params.userId)
+
+  return res.status(200).json({});
+};
+
 // Test authorizations
 
 export const allAccess = (req, res) => {

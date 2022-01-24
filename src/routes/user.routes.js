@@ -9,6 +9,7 @@ import {
   userBoard,
   moderatorBoard,
   createTask,
+  getUserSettings
 } from "../controllers/user.controller.js";
 // Middleware
 import { verifyToken, minimumRole } from "../middleware/authJwt.js";
@@ -43,6 +44,8 @@ function UsersRouter(app) {
     removeById
   );
   app.post("/api/tasks/:userId", [verifyToken, minimumRole("user")], createTask);
+  // Get user settings
+  app.get("/api/users/:userId/settings", [verifyToken, minimumRole("user")], getUserSettings);
 }
 
 export default UsersRouter;

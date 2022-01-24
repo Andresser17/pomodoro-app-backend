@@ -1,9 +1,14 @@
 const authConfig = {
   secret: "bezkoder-secret-key",
-  jwtExpiration: 3600,
-  jwtRefreshExpiration: 86400,
+  // Production
+  // jwtExpiration: 3600,
+  // jwtRefreshExpiration: 86400,
+  
+  // Development
+  jwtExpiration: 360000,
+  jwtRefreshExpiration: 8640000,
 
-  // Test
+  // Test jwt
   // jwtExpiration: 60,
   // jwtRefreshExpiration: 120
 }
