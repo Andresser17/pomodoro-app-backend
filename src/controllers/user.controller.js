@@ -98,10 +98,21 @@ export const createTask = async (req, res) => {
   return res.status(200).json(created.tasks);
 };
 
-export const getUserSettings = (req, res) => {
-  console.log(req.params.userId)
+export const getUserSettings = async (req, res) => {
+  const user = await User.getUserSettings(req.params.userId).catch((err) =>
+    res.status(500).json({ err: err })
+  );
 
-  return res.status(200).json({});
+  return res.status(200).json(user);
+};
+
+export const changeUserSettings = async (req, res) => {
+  const changed = await User.changeUserSettings(
+    req.params.userId,
+    req.body
+  ).catch((err) => res.status(500).json({ err: err }));
+
+  return res.status(204);
 };
 
 // Test authorizations

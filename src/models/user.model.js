@@ -22,6 +22,11 @@ const settingsSchema = new mongoose.Schema({
   alarmSound: String,
 });
 
+const progressSchema = new mongoose.Schema({
+  completedTasks: Number,
+  hoursInvest: Number,
+});
+
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
@@ -35,6 +40,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   tasks: [taskSchema],
+  progress: progressSchema,
 });
 
 userSchema.virtual("id").get(function () {
@@ -61,6 +67,41 @@ userSchema.statics.createTask = async function (userId, data) {
 
   // Save user
   return user.save();
+};
+
+userSchema.statics.getUserSettings = async function (userId) {
+  const user = await this.findOne({ _id: userId });
+
+  if (!user) return user;
+
+  // Return user settings
+  return user.settings;
+};
+
+userSchema.statics.changeUserSettings = async function (userId, newSettings) {
+  const changed = await this.findOneAndUpdate(
+    { _id: userId },
+    {
+      settings: newSettings,
+    }
+  );
+
+  if (!changed) return changed;
+
+  return changed;
+};
+
+userSchema.statics.changeUserProgress = async function (userId, newProgress) {
+  const changed = await this.findOneAndUpdate(
+    { _id: userId },
+    {
+      progress: newProgress,
+    }
+  );
+
+  if (!changed) return changed;
+
+  return changed;
 };
 
 const User = mongoose.model("Users", userSchema);

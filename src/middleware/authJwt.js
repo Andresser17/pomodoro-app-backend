@@ -36,7 +36,7 @@ export const minimumRole = (minRole) => {
   const middleware = async (req, res, next) => {
     const user = await getUserById(req.userId);
     // Check if user exist
-    if (!user) return res.status(400).json({ message: "User doesn't exist" });
+    if (!user) return res.status(400).json({ err: "User doesn't exist" });
 
     const roles = await getRoles(user.roles);
 
