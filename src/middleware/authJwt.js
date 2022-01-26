@@ -13,7 +13,7 @@ const catchError = (err, res) => {
       .send({ message: "Unauthorized! Access Token was expired!" });
   }
 
-  return res.sendStatus(401).send({message: "Unauthorized!"})
+  return res.sendStatus(401).send({ message: "Unauthorized!" });
 };
 
 export const verifyToken = (req, res, next) => {
@@ -35,6 +35,9 @@ export const verifyToken = (req, res, next) => {
 export const minimumRole = (minRole) => {
   const middleware = async (req, res, next) => {
     const user = await getUserById(req.userId);
+    // Check if user exist
+    if (!user) return res.status(400).json({ message: "User doesn't exist" });
+
     const roles = await getRoles(user.roles);
 
     for (let role of roles) {
@@ -43,7 +46,7 @@ export const minimumRole = (minRole) => {
       }
     }
 
-    return res.status(403).send({ message: `Require ${minRole} role!` });
+    return res.status(403).json({ message: `Require ${minRole} role!` });
   };
 
   return middleware;

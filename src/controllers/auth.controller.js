@@ -1,4 +1,5 @@
 import authConfig from "../config/auth.config.js";
+import userConfig from "../config/user.config.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 // Models
@@ -15,6 +16,8 @@ export const signUp = async (req, res) => {
     lastName: req.body.lastName,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
+    // Add default settings to new user.
+    settings: userConfig,
   });
 
   if (req.body.roles) {
@@ -30,6 +33,7 @@ export const signUp = async (req, res) => {
 
     return res.send({ message: "User was registered successfully!" });
   }
+  // If roles wasn't provided.
   const role = await getOneRole({ name: "user" }).catch((err) => {
     return res.status(500).send({ message: err });
   });
