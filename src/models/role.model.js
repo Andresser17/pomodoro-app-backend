@@ -32,7 +32,7 @@ export const getRolesByName = async (userRoles) => {
 };
 
 export const getOneRole = (filter) => {
-  const role = Role.find(filter);
+  const role = Role.findOne(filter);
 
   return role;
 };

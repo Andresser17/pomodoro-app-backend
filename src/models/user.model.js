@@ -13,11 +13,11 @@ const settingsSchema = new mongoose.Schema({
   pomodoro: Number,
   shortBreak: Number,
   shortBreakActive: Boolean,
-  LongBreak: Number,
+  longBreak: Number,
   longBreakActive: Boolean,
+  longBreakInterval: Number,
   autoStartBreak: Boolean,
   autoStartPomodoro: Boolean,
-  LongBreakInterval: Number,
   darkMode: Boolean,
   alarmSound: String,
 });

@@ -2,11 +2,11 @@ const userConfig = {
   pomodoro: 25,
   shortBreak: 5,
   shortBreakActive: true,
-  LongBreak: 15,
+  longBreak: 15,
   longBreakActive: true,
+  longBreakInterval: 4,
   autoStartBreak: false,
   autoStartPomodoro: false,
-  LongBreakInterval: 4,
   darkMode: false,
   alarmSound: "",
 }
