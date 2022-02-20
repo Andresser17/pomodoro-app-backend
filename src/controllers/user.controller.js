@@ -103,16 +103,18 @@ export const getUserSettings = async (req, res) => {
     res.status(500).json({ err: err })
   );
 
-  return res.status(200).json(user);
+  const { _id, ...data } = { ...user.toObject() };
+
+  return res.status(200).json(data);
 };
 
-export const changeUserSettings = async (req, res) => {
-  const changed = await User.changeUserSettings(
+export const updateUserSettings = async (req, res) => {
+  const updated = await User.updateUserSettings(
     req.params.userId,
     req.body
   ).catch((err) => res.status(500).json({ err: err }));
 
-  return res.status(204);
+  return res.status(204).send();
 };
 
 // Test authorizations

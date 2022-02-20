@@ -34,6 +34,7 @@ const options = {
   // all other approaches are now deprecated by MongoDB:
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 };
 
 const initial = () => {

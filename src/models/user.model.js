@@ -78,17 +78,15 @@ userSchema.statics.getUserSettings = async function (userId) {
   return user.settings;
 };
 
-userSchema.statics.changeUserSettings = async function (userId, newSettings) {
-  const changed = await this.findOneAndUpdate(
+userSchema.statics.updateUserSettings = async function (userId, newSettings) {
+  const updated = await this.findOneAndUpdate(
     { _id: userId },
     {
       settings: newSettings,
     }
   );
 
-  if (!changed) return changed;
-
-  return changed;
+  return updated;
 };
 
 userSchema.statics.changeUserProgress = async function (userId, newProgress) {
