@@ -24,15 +24,20 @@ export const list = (req, res) => {
       page = Number.isInteger(req.query.page) ? req.query.page : 0;
     }
   }
-  listUsers(limit, page).then((result) => {
-    res.status(200).send(result);
-  });
+
+  const [data, err] = handleAsyncError(listUsers(limit, page));
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
+
+  return res.status(200).send(data);
 };
 
 export const getById = (req, res) => {
-  getUserById(req.params.userId).then((result) => {
-    res.status(200).send(result);
-  });
+  const [data, err] = handleAsyncError(getUserById(req.params.userId));
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
+
+  return res.status(200).send(data);
 };
 
 export const patchById = (req, res) => {
@@ -45,21 +50,25 @@ export const patchById = (req, res) => {
     req.body.password = salt + "$" + hash;
   }
 
-  updateUser(req.params.userId, req.body).then((result) => {
-    res.status(204).send({});
-  });
+  const [data, err] = handleAsyncError(updateUser(req.params.userId, req.body));
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
+
+  return res.status(204).send();
 };
 
 export const removeById = (req, res) => {
-  deleteById(req.params.userId).then((result) => {
-    res.status(204).send({});
-  });
+  const [data, err] = handleAsyncError(deleteById(req.params.userId));
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
+
+  return res.status(204).send();
 };
 
 export const getTasks = async (req, res) => {
-  const tasks = await User.getTasks(req.params.userId).catch((err) =>
-    res.status(500).json({ err: err })
-  );
+  const [tasks, err] = await handleAsyncError(User.getTasks(req.params.userId));
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
 
   return res.status(200).json(tasks);
 };
@@ -78,11 +87,11 @@ export const createTask = async (req, res) => {
   };
 
   // Add task to db
-  const created = await User.createTask(req.params.userId, newTask).catch(
-    (err) => res.status(500).json({ err: err })
+  const [created, err] = await handleAsyncError(
+    User.createTask(req.params.userId, newTask)
   );
 
-  if (!created) return res.status(400).json({ message: "Task not created" });
+  if (err) return res.status(500).json({ err: "Internal server error" });
 
   // Return user tasks array
   return res.status(200).json(created.tasks);
@@ -93,15 +102,17 @@ export const updateTask = async (req, res) => {
     User.updateTask(req.params.userId, req.params.taskId, req.body)
   );
 
-  if (err) return res.status(500).json({err: "Internal server error"});
+  if (err) return res.status(500).json({ err: "Internal server error" });
 
   return res.status(204).send();
 };
 
 export const getUserSettings = async (req, res) => {
-  const user = await User.getUserSettings(req.params.userId).catch((err) =>
-    res.status(500).json({ err: err })
+  const [user, err] = await handleAsyncError(
+    User.getUserSettings(req.params.userId)
   );
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
 
   const { _id, ...data } = { ...user.toObject() };
 
@@ -109,10 +120,11 @@ export const getUserSettings = async (req, res) => {
 };
 
 export const updateUserSettings = async (req, res) => {
-  const updated = await User.updateUserSettings(
-    req.params.userId,
-    req.body
-  ).catch((err) => res.status(500).json({ err: err }));
+  const [updated, err] = await handleAsyncError(
+    User.updateUserSettings(req.params.userId, req.body)
+  );
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
 
   return res.status(204).send();
 };
