@@ -4,14 +4,14 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 // Models
 import db from "../models/index.js";
-import { createUser, getUserByEmail } from "../models/user.model.js";
 import { getRolesByName, getOneRole } from "../models/role.model.js";
 import { getRefreshToken } from "../models/refreshToken.model.js";
+const { user: User } = db;
 
 const { refreshToken: RefreshToken } = db;
 
 export const signUp = async (req, res) => {
-  const user = await createUser({
+  const user = await User.createUser({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
@@ -50,9 +50,10 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-  const user = await getUserByEmail(req.body.email, ["roles", "-__v"]).catch(
-    (err) => res.status(500).send({ message: err })
-  );
+  const user = await User.getUserByEmail(req.body.email, [
+    "roles",
+    "-__v",
+  ]).catch((err) => res.status(500).send({ message: err }));
 
   if (!user) {
     return res.status(404).send({ message: "User Not found." });

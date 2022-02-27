@@ -1,11 +1,4 @@
 // Models
-import {
-  createUser,
-  listUsers,
-  getUserById,
-  updateUser,
-  deleteById,
-} from "../models/user.model.js";
 import db from "../models/index.js";
 // Helpers
 import handleAsyncError from "../helpers/handleAsyncError.js";
@@ -25,7 +18,7 @@ export const list = (req, res) => {
     }
   }
 
-  const [data, err] = handleAsyncError(listUsers(limit, page));
+  const [data, err] = handleAsyncError(User.listUsers(limit, page));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
 
@@ -33,7 +26,7 @@ export const list = (req, res) => {
 };
 
 export const getById = (req, res) => {
-  const [data, err] = handleAsyncError(getUserById(req.params.userId));
+  const [data, err] = handleAsyncError(User.getUserById(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
 
@@ -50,7 +43,9 @@ export const patchById = (req, res) => {
     req.body.password = salt + "$" + hash;
   }
 
-  const [data, err] = handleAsyncError(updateUser(req.params.userId, req.body));
+  const [data, err] = handleAsyncError(
+    User.updateUser(req.params.userId, req.body)
+  );
 
   if (err) return res.status(500).json({ err: "Internal server error" });
 
@@ -58,7 +53,7 @@ export const patchById = (req, res) => {
 };
 
 export const removeById = (req, res) => {
-  const [data, err] = handleAsyncError(deleteById(req.params.userId));
+  const [data, err] = handleAsyncError(User.deleteById(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
 

@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import authConfig from "../config/auth.config.js";
-// DB
-import { getUserById } from "../models/user.model.js";
+// Models
+import db from "../models/index.js";
 import { getRoles } from "../models/role.model.js";
+const { user: User } = db;
 
 const { TokenExpiredError } = jwt;
 
@@ -34,7 +35,7 @@ export const verifyToken = (req, res, next) => {
 
 export const minimumRole = (minRole) => {
   const middleware = async (req, res, next) => {
-    const user = await getUserById(req.userId);
+    const user = await User.getUserById(req.userId);
     // Check if user exist
     if (!user) return res.status(400).json({ err: "User doesn't exist" });
 

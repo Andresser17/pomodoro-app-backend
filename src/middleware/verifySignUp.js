@@ -1,9 +1,10 @@
-import { getUserByEmail } from "../models/user.model.js";
+// Models
 import db from "../models/index.js";
+const { user: User } = db;
 const ROLES = db.ROLES;
 
 export const checkDuplicateEmail = async (req, res, next) => {
-  const email = await getUserByEmail(req.body.email);
+  const email = await User.getUserByEmail(req.body.email);
 
   if (email)
     return res

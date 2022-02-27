@@ -113,67 +113,50 @@ userSchema.statics.updateUserSettings = async function (userId, newSettings) {
   return updated;
 };
 
-const User = mongoose.model("Users", userSchema);
-
-// methods
-export const getUserByEmail = (email, populate) => {
-  const search = User.findOne({ email: email });
+userSchema.statics.getUserByEmail = async function (email, populate) {
+  const search = await this.findOne({ email: email });
 
   if (populate) return search.populate(...populate);
 
   return search;
 };
 
-export const getUserById = async (id) => {
-  const user = await User.findById(id).catch((err) => err);
-
-  // result = result.toJSON();
-  // delete result._id;
-  // delete result.__v;
-  // return result;
+userSchema.statics.getUserById = async function (id) {
+  const user = await this.findById(id);
 
   return user;
 };
 
-export const createUser = (userData) => {
-  const user = new User(userData);
-  return user.save();
+userSchema.statics.createUser = async function (userData) {
+  const user = new this(userData);
+  return await user.save();
 };
 
-export const listUsers = (perPage, page) => {
-  return new Promise((resolve, reject) => {
-    User.find()
-      .limit(perPage)
-      .skip(perPage * page)
-      .exec(function (err, users) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(users);
-        }
-      });
-  });
+userSchema.statics.listUsers = async function (perPage, page) {
+  const user = await this.find()
+    .limit(perPage)
+    .skip(perPage * page);
+
+  return user;
 };
 
-export const updateUser = (id, userData) => {
-  return User.findOneAndUpdate(
+userSchema.statics.updateUser = async function (id, userData) {
+  const updated = await this.findOneAndUpdate(
     {
       _id: id,
     },
     userData
   );
+
+  return updated;
 };
 
-export const deleteById = (userId) => {
-  return new Promise((resolve, reject) => {
-    User.deleteMany({ _id: userId }, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(err);
-      }
-    });
-  });
+userSchema.statics.deleteById = async function (userId) {
+  const deleted = await this.deleteMany({ _id: userId });
+
+  return deleted;
 };
+
+const User = mongoose.model("Users", userSchema);
 
 export default User;
