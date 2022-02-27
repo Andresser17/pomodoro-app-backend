@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import authConfig from "../config/auth.config.js";
 // Models
 import db from "../models/index.js";
-import { getRoles } from "../models/role.model.js";
 const { user: User } = db;
+const { role: Role } = db;
 
 const { TokenExpiredError } = jwt;
 
@@ -11,17 +11,17 @@ const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
     return res
       .status(401)
-      .send({ message: "Unauthorized! Access Token was expired!" });
+      .json({ message: "Unauthorized! Access Token was expired!" });
   }
 
-  return res.sendStatus(401).send({ message: "Unauthorized!" });
+  return res.status(401).json({ message: "Unauthorized!" });
 };
 
 export const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(403).json({ message: "No token provided!" });
   }
 
   jwt.verify(token, authConfig.secret, (err, decoded) => {
@@ -39,7 +39,7 @@ export const minimumRole = (minRole) => {
     // Check if user exist
     if (!user) return res.status(400).json({ err: "User doesn't exist" });
 
-    const roles = await getRoles(user.roles);
+    const roles = await Role.getRoles(user.roles);
 
     for (let role of roles) {
       if (role.name === minRole) {

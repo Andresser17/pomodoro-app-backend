@@ -43,7 +43,7 @@ export const updateUserById = (req, res) => {
     req.body.password = salt + "$" + hash;
   }
 
-  const [data, err] = handleAsyncError(
+  const [, err] = handleAsyncError(
     User.updateUser(req.params.userId, req.body)
   );
 
@@ -53,7 +53,7 @@ export const updateUserById = (req, res) => {
 };
 
 export const deleteUserById = (req, res) => {
-  const [data, err] = handleAsyncError(User.deleteById(req.params.userId));
+  const [, err] = handleAsyncError(User.deleteById(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
 
@@ -69,8 +69,6 @@ export const getUserTasks = async (req, res) => {
 };
 
 export const createUserTask = async (req, res) => {
-  const date = new Date();
-
   // Task template
   const newTask = {
     title: req.body.title,
@@ -93,7 +91,7 @@ export const createUserTask = async (req, res) => {
 };
 
 export const updateUserTask = async (req, res) => {
-  const [data, err] = await handleAsyncError(
+  const [, err] = await handleAsyncError(
     User.updateTask(req.params.userId, req.params.taskId, req.body)
   );
 
@@ -115,7 +113,7 @@ export const getUserSettings = async (req, res) => {
 };
 
 export const updateUserSettings = async (req, res) => {
-  const [updated, err] = await handleAsyncError(
+  const [, err] = await handleAsyncError(
     User.updateUserSettings(req.params.userId, req.body)
   );
 

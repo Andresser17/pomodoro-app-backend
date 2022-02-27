@@ -6,10 +6,8 @@ import dotenv from "dotenv";
 import AuthorizationRouter from "./routes/auth.routes.js";
 import UsersRouter from "./routes/user.routes.js";
 // Models
-import { createRole } from "./models/role.model.js";
-// DB
 import db from "./models/index.js";
-const Role = db.role;
+const { role: Role } = db;
 dotenv.config();
 
 const app = express();
@@ -40,9 +38,9 @@ const options = {
 const initial = () => {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
-      createRole("user");
-      createRole("moderator");
-      createRole("admin");
+      Role.createRole("user");
+      Role.createRole("moderator");
+      Role.createRole("admin");
     }
   });
 };

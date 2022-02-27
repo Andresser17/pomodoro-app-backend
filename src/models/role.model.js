@@ -4,37 +4,32 @@ const roleSchema = new mongoose.Schema({
   name: String,
 });
 
-const Role = mongoose.model("Role", roleSchema);
-
-// Methods
-export const createRole = async (role) => {
+roleSchema.statics.createRole = async function (role) {
   const saved = await new Role({
     name: role,
   }).save();
 
-  if (!saved) {
-    return console.error(saved);
-  }
-
-  return console.log(`added ${role} to roles collection`);
+  return saved;
 };
 
-export const getRoles = async (userRoles) => {
+roleSchema.statics.getRoles = async function (userRoles) {
   const roles = await Role.find({ _id: { $in: userRoles } });
 
   return roles;
 };
 
-export const getRolesByName = async (userRoles) => {
+roleSchema.statics.getRolesByName = async function (userRoles) {
   const roles = await Role.find({ name: { $in: userRoles } });
 
   return roles;
 };
 
-export const getOneRole = (filter) => {
-  const role = Role.findOne(filter);
+roleSchema.statics.getOneRole = async function (filter) {
+  const role = await Role.findOne(filter);
 
   return role;
 };
+
+const Role = mongoose.model("Role", roleSchema);
 
 export default Role;

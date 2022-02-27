@@ -3,13 +3,11 @@ import bcrypt from "bcryptjs";
 // Configs
 import authConfig from "../config/auth.config.js";
 import userConfig from "../config/user.config.js";
-// Models
-import db from "../models/index.js";
-import { getRolesByName, getOneRole } from "../models/role.model.js";
 // Helpers
 import handleAsyncError from "../helpers/handleAsyncError.js";
-const { user: User } = db;
-const { refreshToken: RefreshToken } = db;
+// Models
+import db from "../models/index.js";
+const { user: User, refreshToken: RefreshToken, role: Role } = db;
 
 export const signUp = async (req, res) => {
   const [user, err] = await handleAsyncError(
@@ -27,7 +25,7 @@ export const signUp = async (req, res) => {
 
   try {
     if (req.body.roles) {
-      const roles = await getRolesByName(req.body.roles);
+      const roles = await Role.getRolesByName(req.body.roles);
 
       // Add roles to created user
       user.roles = roles.map((role) => role._id);
@@ -38,7 +36,7 @@ export const signUp = async (req, res) => {
         .json({ message: "User was registered successfully!" });
     }
     // If roles wasn't provided.
-    const role = await getOneRole({ name: "user" });
+    const role = await Role.getOneRole({ name: "user" });
 
     // Add role to created user
     user.roles = [role._id];
