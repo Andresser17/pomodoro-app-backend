@@ -1,5 +1,5 @@
 // Controllers
-import { signUp, signIn, refreshToken } from "../controllers/auth.controller.js";
+import { signUp, signIn, getNewAccessToken } from "../controllers/auth.controller.js";
 // Middleware
 import {
   checkDuplicateEmail,
@@ -26,7 +26,7 @@ function AuthorizationRouter(app) {
 
   app.post("/api/auth/signin", signIn);
 
-  app.post("/api/auth/refreshtoken", refreshToken);
+  app.post("/api/auth/refreshtoken", getNewAccessToken);
 }
 
 export default AuthorizationRouter;

@@ -5,9 +5,7 @@ import bcrypt from "bcryptjs";
 // Models
 import db from "../models/index.js";
 import { getRolesByName, getOneRole } from "../models/role.model.js";
-import { getRefreshToken } from "../models/refreshToken.model.js";
 const { user: User } = db;
-
 const { refreshToken: RefreshToken } = db;
 
 export const signUp = async (req, res) => {
@@ -90,16 +88,16 @@ export const signIn = async (req, res) => {
   });
 };
 
-export const refreshToken = async (req, res) => {
+export const getNewAccessToken = async (req, res) => {
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
     return res.status(403).json({ message: "Refresh Token is required!" });
   }
 
-  const refreshToken = await getRefreshToken(requestToken).catch((err) =>
-    res.status(500).json({ message: err })
-  );
+  const refreshToken = await RefreshToken
+    .getRefreshToken(requestToken)
+    .catch((err) => res.status(500).json({ message: err }));
 
   if (!refreshToken) {
     res.status(403).json({ message: "Refresh token is not in database!" });
