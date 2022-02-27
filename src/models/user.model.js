@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 const taskSchema = new mongoose.Schema({
   title: String,
   description: String,
+  completedPomodoros: Number,
+  expectedPomodoros: Number,
+  color: String,
   completed: Boolean,
-  pomodoros: Number,
-  from: Date,
-  to: Date,
 });
 
 const settingsSchema = new mongoose.Schema({
@@ -52,10 +52,6 @@ userSchema.set("toJSON", {
   virtuals: true,
 });
 
-// userSchema.findById = function (cb) {
-//   return this.model("Users").find({ id: this.id }, cb);
-// };
-
 userSchema.statics.createTask = async function (userId, data) {
   // Get user
   const user = await this.findOne({ _id: userId });
@@ -67,6 +63,34 @@ userSchema.statics.createTask = async function (userId, data) {
 
   // Save user
   return user.save();
+};
+
+userSchema.statics.getTasks = async function (userId) {
+  const user = await this.findOne({ _id: userId });
+
+  if (!user) return user;
+
+  // Return user settings
+  return user.tasks;
+};
+
+userSchema.statics.updateTask = async function (userId, taskId, updatedTask) {
+  // Get task
+  const task = await this.updateOne(
+    { _id: userId, "tasks._id": taskId },
+    {
+      $set: {
+        "tasks.$.title": updatedTask.title,
+        "tasks.$.description": updatedTask.description,
+        "tasks.$.completedPomodoros": updatedTask.completedPomodoros,
+        "tasks.$.expectedPomodoros": updatedTask.expectedPomodoros,
+        "tasks.$.color": updatedTask.color,
+        "tasks.$.completed": updatedTask.completed,
+      },
+    }
+  );
+
+  return task;
 };
 
 userSchema.statics.getUserSettings = async function (userId) {
@@ -87,19 +111,6 @@ userSchema.statics.updateUserSettings = async function (userId, newSettings) {
   );
 
   return updated;
-};
-
-userSchema.statics.changeUserProgress = async function (userId, newProgress) {
-  const changed = await this.findOneAndUpdate(
-    { _id: userId },
-    {
-      progress: newProgress,
-    }
-  );
-
-  if (!changed) return changed;
-
-  return changed;
 };
 
 const User = mongoose.model("Users", userSchema);
@@ -164,18 +175,5 @@ export const deleteById = (userId) => {
     });
   });
 };
-// Remove this func before deploy
-// Delete all users
-// export const deleteById = () => {
-//     return new Promise((resolve, reject) => {
-//         User.deleteMany({}, (err) => {
-//             if (err) {
-//                 reject(err);
-//             } else {
-//                 resolve(err);
-//             }
-//         });
-//     });
-// };
 
 export default User;

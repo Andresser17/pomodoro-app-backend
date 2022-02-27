@@ -1,3 +1,4 @@
+// Models
 import {
   createUser,
   listUsers,
@@ -6,6 +7,8 @@ import {
   deleteById,
 } from "../models/user.model.js";
 import db from "../models/index.js";
+// Helpers
+import handleAsyncError from "../helpers/handleAsyncError.js";
 const { user: User } = db;
 
 export const list = (req, res) => {
@@ -53,41 +56,28 @@ export const removeById = (req, res) => {
   });
 };
 
+export const getTasks = async (req, res) => {
+  const tasks = await User.getTasks(req.params.userId).catch((err) =>
+    res.status(500).json({ err: err })
+  );
+
+  return res.status(200).json(tasks);
+};
+
 export const createTask = async (req, res) => {
   const date = new Date();
 
-  let from = req.body.from;
-  // If from property wasn't provided get actual date
-  if (!req.body.from) {
-    let month = String(date.getMonth() + 1);
-    month = month.length === 1 ? `0${month}` : month;
-    let day = String(date.getDate());
-    day = day.length === 1 ? `0${day}` : day;
-    const year = String(date.getFullYear());
-    from = `${month}-${day}-${year}`;
-  }
-
-  let to = "";
-  // if to property wasn't provided get actual date
-  if (!req.body.to) {
-    let month = String(date.getMonth() + 1);
-    month = month.length === 1 ? `0${month}` : month;
-    let day = String(date.getDate());
-    day = day.length === 1 ? `0${day}` : day;
-    const year = String(date.getFullYear());
-    // If from property wasn't provided
-    to = `${month}-${day}-${year}`;
-  }
-
+  // Task template
   const newTask = {
     title: req.body.title,
     description: req.body.description,
+    completedPomodoros: req.body.completedPomodoros,
+    expectedPomodoros: req.body.expectedPomodoros,
+    color: req.body.color,
     completed: req.body.completed,
-    pomodoros: req.body.pomodoros,
-    from,
-    to,
   };
 
+  // Add task to db
   const created = await User.createTask(req.params.userId, newTask).catch(
     (err) => res.status(500).json({ err: err })
   );
@@ -96,6 +86,16 @@ export const createTask = async (req, res) => {
 
   // Return user tasks array
   return res.status(200).json(created.tasks);
+};
+
+export const updateTask = async (req, res) => {
+  const [data, err] = await handleAsyncError(
+    User.updateTask(req.params.userId, req.params.taskId, req.body)
+  );
+
+  if (err) return res.status(500).json({err: "Internal server error"});
+
+  return res.status(204).send();
 };
 
 export const getUserSettings = async (req, res) => {
