@@ -4,7 +4,7 @@ import db from "../models/index.js";
 import handleAsyncError from "../helpers/handleAsyncError.js";
 const { user: User } = db;
 
-export const list = (req, res) => {
+export const listUsers = (req, res) => {
   // let limit =
   //     req.query.limit && req.query.limit <= 100
   //         ? parseInt(req.query.limit)
@@ -25,7 +25,7 @@ export const list = (req, res) => {
   return res.status(200).send(data);
 };
 
-export const getById = (req, res) => {
+export const getUserById = (req, res) => {
   const [data, err] = handleAsyncError(User.getUserById(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
@@ -33,7 +33,7 @@ export const getById = (req, res) => {
   return res.status(200).send(data);
 };
 
-export const patchById = (req, res) => {
+export const updateUserById = (req, res) => {
   if (req.body.password) {
     let salt = crypto.randomBytes(16).toString("base64");
     let hash = crypto
@@ -52,7 +52,7 @@ export const patchById = (req, res) => {
   return res.status(204).send();
 };
 
-export const removeById = (req, res) => {
+export const deleteUserById = (req, res) => {
   const [data, err] = handleAsyncError(User.deleteById(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
@@ -60,7 +60,7 @@ export const removeById = (req, res) => {
   return res.status(204).send();
 };
 
-export const getTasks = async (req, res) => {
+export const getUserTasks = async (req, res) => {
   const [tasks, err] = await handleAsyncError(User.getTasks(req.params.userId));
 
   if (err) return res.status(500).json({ err: "Internal server error" });
@@ -68,7 +68,7 @@ export const getTasks = async (req, res) => {
   return res.status(200).json(tasks);
 };
 
-export const createTask = async (req, res) => {
+export const createUserTask = async (req, res) => {
   const date = new Date();
 
   // Task template
@@ -92,7 +92,7 @@ export const createTask = async (req, res) => {
   return res.status(200).json(created.tasks);
 };
 
-export const updateTask = async (req, res) => {
+export const updateUserTask = async (req, res) => {
   const [data, err] = await handleAsyncError(
     User.updateTask(req.params.userId, req.params.taskId, req.body)
   );

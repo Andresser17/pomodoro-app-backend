@@ -1,18 +1,18 @@
 // Controller
 import {
-  list,
-  getById,
-  patchById,
-  removeById,
+  listUsers,
+  getUserById,
+  updateUserById,
+  deleteUserById,
   allAccess,
   adminBoard,
   userBoard,
   moderatorBoard,
   getUserSettings,
   updateUserSettings,
-  getTasks,
-  createTask,
-  updateTask,
+  getUserTasks,
+  createUserTask,
+  updateUserTask,
 } from "../controllers/user.controller.js";
 // Middleware
 import { verifyToken, minimumRole } from "../middleware/authJwt.js";
@@ -38,26 +38,54 @@ function UsersRouter(app) {
   );
 
   app.get("/api/test/admin", [verifyToken, minimumRole("admin")], adminBoard);
-  app.get("/api/users", [verifyToken, minimumRole("user")], list);
+  app.get("/api/users", [verifyToken, minimumRole("user")], listUsers);
   // Get user by Id
-  app.get("/api/users/:userId", [verifyToken, minimumRole("user")], getById);
+  app.get(
+    "/api/users/:userId",
+    [verifyToken, minimumRole("user")],
+    getUserById
+  );
   // Update user
-  app.patch("/api/users/:userId", [verifyToken, minimumRole("user")], patchById);
+  app.patch(
+    "/api/users/:userId",
+    [verifyToken, minimumRole("user")],
+    updateUserById
+  );
   app.delete(
     "/api/users/:userId",
     [verifyToken, minimumRole("admin")],
-    removeById
+    deleteUserById
   );
   // Get user settings
-  app.get("/api/users/:userId/settings", [verifyToken, minimumRole("user")], getUserSettings);
+  app.get(
+    "/api/users/:userId/settings",
+    [verifyToken, minimumRole("user")],
+    getUserSettings
+  );
   // Update user settings
-  app.patch("/api/users/:userId/settings", [verifyToken, minimumRole("user")], updateUserSettings);
+  app.patch(
+    "/api/users/:userId/settings",
+    [verifyToken, minimumRole("user")],
+    updateUserSettings
+  );
   // Get user's tasks
-  app.get("/api/users/:userId/tasks", [verifyToken, minimumRole("user")], getTasks);
+  app.get(
+    "/api/users/:userId/tasks",
+    [verifyToken, minimumRole("user")],
+    getUserTasks
+  );
   // Create new task
-  app.post("/api/users/:userId/tasks", [verifyToken, minimumRole("user")], createTask);
+  app.post(
+    "/api/users/:userId/tasks",
+    [verifyToken, minimumRole("user")],
+    createUserTask
+  );
   // Update a task
-  app.patch("/api/users/:userId/tasks/:taskId", [verifyToken, minimumRole("user")], updateTask);
+  app.patch(
+    "/api/users/:userId/tasks/:taskId",
+    [verifyToken, minimumRole("user")],
+    updateUserTask
+  );
 }
 
 export default UsersRouter;
