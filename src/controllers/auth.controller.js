@@ -68,23 +68,24 @@ export const signIn = async (req, res) => {
     });
   }
 
+  // Create a new access token
   const accessToken = jwt.sign({ id: user.id }, authConfig.secret, {
     expiresIn: authConfig.jwtExpiration,
   });
 
+  // Create a new refresh token
   const refreshToken = await RefreshToken.createToken(user);
 
-  const authorities = [];
-
-  for (let role of user.roles) {
-    authorities.push("ROLE_" + role.name.toUpperCase());
-  }
+  // Get roles by id and map
+  let roles = (await Role.getRoles(user.roles)).map(
+    (role) => "ROLE_" + role.name.toUpperCase()
+  );
 
   res.status(200).json({
     id: user._id,
     username: user.username,
     email: user.email,
-    roles: authorities,
+    roles,
     accessToken,
     refreshToken,
   });

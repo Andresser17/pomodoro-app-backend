@@ -9,15 +9,16 @@ const taskSchema = new mongoose.Schema({
   completed: Boolean,
 });
 
+const timerModes = new mongoose.Schema({
+  name: String,
+  time: Number,
+  active: Boolean,
+  interval: Number,
+  autoStart: Boolean,
+});
+
 const settingsSchema = new mongoose.Schema({
-  pomodoro: Number,
-  shortBreak: Number,
-  shortBreakActive: Boolean,
-  longBreak: Number,
-  longBreakActive: Boolean,
-  longBreakInterval: Number,
-  autoStartBreak: Boolean,
-  autoStartPomodoro: Boolean,
+  timerModes: [timerModes],
   darkMode: Boolean,
   alarmSound: String,
 });
