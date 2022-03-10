@@ -10,6 +10,7 @@ import {
   moderatorBoard,
   getUserSettings,
   updateUserSettings,
+  updateTimerMode,
   getUserTasks,
   createUserTask,
   updateUserTask,
@@ -67,6 +68,12 @@ function UsersRouter(app) {
     "/api/users/:userId/settings",
     [verifyToken, minimumRole("user")],
     updateUserSettings
+  );
+  // Update a timer mode
+  app.patch(
+    "/api/users/:userId/timermodes",
+    [verifyToken, minimumRole("user")],
+    updateTimerMode
   );
   // Get user's tasks
   app.get(

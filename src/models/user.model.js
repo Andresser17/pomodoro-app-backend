@@ -11,7 +11,7 @@ const taskSchema = new mongoose.Schema({
 
 const timerModes = new mongoose.Schema({
   name: String,
-  time: Number,
+  duration: Number,
   active: Boolean,
   interval: Number,
   autoStart: Boolean,
@@ -19,6 +19,7 @@ const timerModes = new mongoose.Schema({
 
 const settingsSchema = new mongoose.Schema({
   timerModes: [timerModes],
+  defaultTimerMode: String,
   darkMode: Boolean,
   alarmSound: String,
 });
@@ -104,10 +105,31 @@ userSchema.statics.getUserSettings = async function (userId) {
 };
 
 userSchema.statics.updateUserSettings = async function (userId, newSettings) {
-  const updated = await this.findOneAndUpdate(
+  const updatedTimerModes = await this.findOneAndUpdate(
     { _id: userId },
     {
-      settings: newSettings,
+      $set: {
+        "settings.defaultTimerMode": newSettings.defaultTimerMode,
+        "settings.darkMode": newSettings.darkMode,
+        "settings.alarmSound": newSettings.alarmSound,
+      },
+    }
+  );
+
+  return updatedTimerModes;
+};
+
+userSchema.statics.updateTimerMode = async function (userId, newTimerMode) {
+  const updated = await this.findOneAndUpdate(
+    { _id: userId, "settings.timerModes._id": newTimerMode._id },
+    {
+      $set: {
+        "settings.timerModes.$.name": newTimerMode.name,
+        "settings.timerModes.$.duration": newTimerMode.duration,
+        "settings.timerModes.$.active": newTimerMode.active,
+        "settings.timerModes.$.interval": newTimerMode.interval,
+        "settings.timerModes.$.autoStart": newTimerMode.autoStart,
+      },
     }
   );
 

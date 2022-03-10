@@ -122,6 +122,16 @@ export const updateUserSettings = async (req, res) => {
   return res.status(204).send();
 };
 
+export const updateTimerMode = async (req, res) => {
+  const [, err] = await handleAsyncError(
+    User.updateTimerMode(req.params.userId, req.body)
+  );
+
+  if (err) return res.status(500).json({ err: "Internal server error" });
+
+  return res.status(204).send();
+};
+
 // Test authorizations
 
 export const allAccess = (req, res) => {
