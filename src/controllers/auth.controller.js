@@ -21,6 +21,9 @@ export const signUp = async (req, res) => {
     })
   );
 
+  // Set default timer mode
+  user.settings.defaultTimerMode = user.settings.timerModes[0]._id;
+
   if (err) return res.status(500).json({ err: "Internal server error" });
 
   try {
@@ -29,17 +32,15 @@ export const signUp = async (req, res) => {
 
       // Add roles to created user
       user.roles = roles.map((role) => role._id);
-      await user.save();
-
-      return res
-        .status(200)
-        .json({ message: "User was registered successfully!" });
     }
-    // If roles wasn't provided.
-    const role = await Role.getOneRole({ name: "user" });
 
-    // Add role to created user
-    user.roles = [role._id];
+    // If roles wasn't provided.
+    if (!req.body.roles) {
+      const role = await Role.getOneRole({ name: "user" });
+
+      // Add role to created user
+      user.roles = [role._id];
+    }
     await user.save();
   } catch (err) {
     return res.status(500).json({ err: "Internal server error" });
